@@ -2,18 +2,20 @@ import { useState } from 'react'
 import { ethers } from 'ethers'
 
 function App() {
-    const [data, setData] = useState({
+    const [data, setData] = useState<{account: string, balance: string}>({
       account: '',
-      balance: null
+      balance: ''
     })
 
-  function getBalance(address){
+  console.log(data)
+
+  function getBalance(address: string){
     window.ethereum.request({
       method: 'eth_getBalance',
       params: [address, "latest"]
     })
     .then(balance=>{
-      setData(prevData=>{
+      setData((prevData)=>{
         return {
           ...prevData,
           balance: ethers.formatEther(balance)
@@ -22,22 +24,30 @@ function App() {
     })
   }
 
-  function changeAccount(account){
-    setData(prevData=>{
-      return {
-        ...prevData,
-        account: account
-      }
-    })
+  window.ethereum.on('accountsChanged', changeAccount)
 
-    getBalance(account)
+  function changeAccount(accounts: string[]){
+    console.log(accounts)
+    if (accounts.length > 0) {
+      const address = accounts[0]; // Use the first address from the array
+      console.log(address);
+      setData((prevData) => ({
+        ...prevData,
+        account: address,
+        balance: '',
+      }));
+  
+      getBalance(address);
+    }
   }
 
   function connectWallet(){
     if(window.ethereum){
       window.ethereum.request({ method: 'eth_requestAccounts'})
-      .then((res)=>changeAccount(res[0]))
-    
+      .then((res)=>{
+        console.log(res)
+        changeAccount(res)
+      })
     }  else {
       alert("install metamask extension!!");
     }
