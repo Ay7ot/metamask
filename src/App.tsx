@@ -25,7 +25,7 @@ function App() {
     })
   }
 
-  window.ethereum.on('accountsChanged', changeAccount)
+  window.ethereum?.on('accountsChanged', changeAccount)
 
   function changeAccount(accounts: string[]){
     if (accounts.length > 0) {
