@@ -14,7 +14,8 @@ function App() {
       method: 'eth_getBalance',
       params: [address, "latest"]
     })
-    .then(balance=>{
+    .then((balance: string)=>{
+      console.log(balance)
       setData((prevData)=>{
         return {
           ...prevData,
@@ -27,10 +28,9 @@ function App() {
   window.ethereum.on('accountsChanged', changeAccount)
 
   function changeAccount(accounts: string[]){
-    console.log(accounts)
     if (accounts.length > 0) {
       const address = accounts[0]; // Use the first address from the array
-      console.log(address);
+
       setData((prevData) => ({
         ...prevData,
         account: address,
@@ -44,7 +44,7 @@ function App() {
   function connectWallet(){
     if(window.ethereum){
       window.ethereum.request({ method: 'eth_requestAccounts'})
-      .then((res)=>{
+      .then((res: string[])=>{
         console.log(res)
         changeAccount(res)
       })
